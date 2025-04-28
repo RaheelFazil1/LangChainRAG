@@ -2,7 +2,7 @@ import google.generativeai as genai
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-genai.configure(api_key='AIzaSyBSbMjlFUyyDJCtXpuTNDQMqwoYTBWG6QM')
+
 
 model = genai.GenerativeModel("gemini-1.5-flash")
 response_v1a = model.generate_content("what is 2+2 formula")
