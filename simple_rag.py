@@ -5,7 +5,7 @@ from langchain_google_genai import GoogleGenerativeAI
 from langchain.chains import ConversationChain
 from langchain.memory import ConversationBufferMemory
 
-my_key = 'AIzaSyBSbMjlFUyyDJCtXpuTNDQMqwoYTBWG6QM'
+my_key = ''
 
 genai.configure(api_key=my_key)
 
