@@ -2,7 +2,7 @@ import google.generativeai as genai
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-
+my_key = ''
 
 genai.configure(api_key=my_key)
 
