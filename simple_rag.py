@@ -89,12 +89,22 @@ def rag_response(query):
 # response = rag_response(query)
 # print(response)
 
-query = 'my name is Raheel, do you have property in palm jumairah?'
+query = 'my name is Raheel, do you have property in Dubai hill eastate?'
 response = rag_response(query)
 print(response)
 
 print('------------------------------------------------------------------------')
-query = 'how many housed you have there for rent.'
+query = 'how many housed you have there for rent or sale.'
+response = rag_response(query)
+print(response)
+
+print('------------------------------------------------------------------------')
+query = 'what are the average prices here for 2 bed apartment?'
+response = rag_response(query)
+print(response)
+
+print('------------------------------------------------------------------------')
+query = 'do you know me? What is my name?'
 response = rag_response(query)
 print(response)
 
