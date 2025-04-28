@@ -1,10 +1,10 @@
-# import os
+import os
 # import hmac
 # import hashlib
 import google.generativeai as genai
 # from flask import Flask, request, jsonify
 # from flask_cors import CORS
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 from langchain_google_genai import GoogleGenerativeAI
 from langchain.chains import ConversationChain
 from langchain.memory import ConversationBufferMemory
@@ -12,6 +12,7 @@ from langdetect import detect
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
+load_dotenv()
 # Initialize Flask App
 # app = Flask(__name__)
 # CORS(app)
@@ -20,7 +21,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 # load_dotenv()
 
 # API Key for Google Generative AI
-API_KEY = "AIzaSyBSbMjlFUyyDJCtXpuTNDQMqwoYTBWG6QM"
+API_KEY = os.getenv("API_KEY")
 
 if not API_KEY:
     raise ValueError("ERROR: GEMINI_API_KEY is missing! Set it in your environment.")
@@ -84,7 +85,7 @@ def load_knowledge_base(file_path):
     return chunks
 
 def retrieve_relevant_chunks(query, top_k=3):
-    kb_file_path = 'housses  knowledge base.txt'
+    kb_file_path = 'housess_knowledge_base.txt'
     knowledge_base = load_knowledge_base(kb_file_path)
     # Create a TF-IDF vectorizer for the knowledge base
     vectorizer = TfidfVectorizer()

@@ -4,16 +4,17 @@ from sklearn.metrics.pairwise import cosine_similarity
 from langchain_google_genai import GoogleGenerativeAI
 from langchain.chains import ConversationChain
 from langchain.memory import ConversationBufferMemory
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
-my_key = ''
-
-genai.configure(api_key=my_key)
+my_api_key = os.getenv("API_KEY")
+genai.configure(api_key=my_api_key)
 
 model = genai.GenerativeModel("gemini-1.5-flash")
 # response_v1a = model.generate_content("what is 2+2 formula")
 # print(response_v1a.text)
 
-file_path = 'housses  knowledge base.txt'
 def load_knowledge_base(file_path):
     with open(file_path, 'r', encoding='utf-8') as file:
         data = file.read()
@@ -21,13 +22,12 @@ def load_knowledge_base(file_path):
     chunks = data.split('\n\n')  # Adjust splitting logic based on your file format
     return chunks
 
-knowledge_base = load_knowledge_base(file_path)
-
-# Create a TF-IDF vectorizer for the knowledge base
-vectorizer = TfidfVectorizer()
-tfidf_matrix = vectorizer.fit_transform(knowledge_base)
-
 def retrieve_relevant_chunks(query, top_k=3):
+    file_path = 'housess_knowledge_base.txt'
+    knowledge_base = load_knowledge_base(file_path)
+    # Create a TF-IDF vectorizer for the knowledge base
+    vectorizer = TfidfVectorizer()
+    tfidf_matrix = vectorizer.fit_transform(knowledge_base)
     # Vectorize the query
     query_vector = vectorizer.transform([query])
     # Compute cosine similarity between the query and all chunks
@@ -41,7 +41,7 @@ def retrieve_relevant_chunks(query, top_k=3):
 # print(retrieve_relevant_chunks("What is 2+2 formula", 3))
 
 # Set up LangChain LLM and Memory
-llm = GoogleGenerativeAI(model="gemini-1.5-flash", google_api_key=my_key)
+llm = GoogleGenerativeAI(model="gemini-1.5-flash", google_api_key=my_api_key)
 memory = ConversationBufferMemory()
 conversation = ConversationChain(llm=llm, memory=memory)
 
@@ -89,36 +89,57 @@ def rag_response(query):
 # response = rag_response(query)
 # print(response)
 
-query = 'my name is Raheel, do you have property in Dubai hill eastate?'
-response = rag_response(query)
-print(response)
-
-print('------------------------------------------------------------------------')
-query = 'how many housed you have there for rent or sale.'
-response = rag_response(query)
-print(response)
-
-print('------------------------------------------------------------------------')
-query = 'what are the average prices here for 2 bed apartment?'
-response = rag_response(query)
-print(response)
-
-print('------------------------------------------------------------------------')
-query = 'do you know me? What is my name?'
-response = rag_response(query)
-print(response)
-
-print('------------------------------------------------------------------------')
-query = 'summerize my chat.'
-response = rag_response(query)
-print(response)
-
-print('-----Test completed-------')
+# query = 'my name is Raheel, do you have property in Dubai hill eastate?'
+# response = rag_response(query)
+# print(response)
+#
+# print('------------------------------------------------------------------------')
+# query = 'how many housed you have there for rent or sale.'
+# response = rag_response(query)
+# print(response)
+#
+# print('------------------------------------------------------------------------')
+# query = 'what are the average prices here for 2 bed apartment?'
+# response = rag_response(query)
+# print(response)
+#
+# print('------------------------------------------------------------------------')
+# query = 'do you know me? What is my name?'
+# response = rag_response(query)
+# print(response)
+#
+# print('------------------------------------------------------------------------')
+# query = 'summarize my chat.'
+# response = rag_response(query)
+# print(response)
 
 def clear_memory():
     global memory
     memory.clear()
-    return "I have cleared our conversation history."
+    print("I have cleared our conversation history.")
+    # return "I have cleared our conversation history."
 
-clear_memory()
+def main():
+    print("Welcome to the Housess Real Estate Assistant!")
+    print("Type 'exit' at any time to end the conversation.\n")
+
+    while True:
+        # Prompt the user for input
+        query = input("You: ").strip()
+
+        # Check if the user wants to exit
+        if query.lower() in ["exit", "quit", "bye"]:
+            print("Goodbye! Thank you for using the Housess Real Estate Assistant.")
+            break
+
+        # Generate and display the response
+        response = rag_response(query)
+        print(f"\nAssistant: {response}\n{'-' * 70}\n")
+
+# Run the main function
+if __name__ == "__main__":
+    main()
+    print('-----Test completed-------')
+    clear_memory()
+
 
