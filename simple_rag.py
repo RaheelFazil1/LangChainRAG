@@ -1,13 +1,16 @@
 import google.generativeai as genai
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from langchain_google_genai import GoogleGenerativeAI
+from langchain.chains import ConversationChain
+from langchain.memory import ConversationBufferMemory
 
-my_key = ''
+my_key = 'AIzaSyBSbMjlFUyyDJCtXpuTNDQMqwoYTBWG6QM'
 
 genai.configure(api_key=my_key)
 
 model = genai.GenerativeModel("gemini-1.5-flash")
-response_v1a = model.generate_content("what is 2+2 formula")
+# response_v1a = model.generate_content("what is 2+2 formula")
 # print(response_v1a.text)
 
 file_path = 'housses  knowledge base.txt'
@@ -37,6 +40,11 @@ def retrieve_relevant_chunks(query, top_k=3):
 
 # print(retrieve_relevant_chunks("What is 2+2 formula", 3))
 
+# Set up LangChain LLM and Memory
+llm = GoogleGenerativeAI(model="gemini-1.5-flash", google_api_key=my_key)
+memory = ConversationBufferMemory()
+conversation = ConversationChain(llm=llm, memory=memory)
+
 def rag_response(query):
     # Step 1: Retrieve relevant chunks from the knowledge base
     relevant_chunks = retrieve_relevant_chunks(query, top_k=3)
@@ -59,17 +67,48 @@ def rag_response(query):
         If you don't know the answer, politely inform the user.
         """
 
-    context = persona + context + "\n\n"
-    # Step 2: Generate a response using the retrieved context
-    prompt = f"Context:\n{context}\n\nQuestion:\n{query}\n\nAnswer:"
-    response = model.generate_content(prompt)
+    # Combine persona, context, and conversation history
+    full_context = persona + "\n\nRetrieved Context:\n" + context + "\n\n"
 
-    return response.text
+    # Use the ConversationChain to generate a response
+    try:
+        response = conversation.run(input=f"Context:\n{full_context}\n\nQuestion:\n{query}\n\nAnswer:")
+        return response.strip()
+    except Exception as e:
+        return f"An error occurred while processing your request: {str(e)}"
 
-query = 'what are you services?'
+    # context = persona + context + "\n\n"
+    # # Step 2: Generate a response using the retrieved context
+    # prompt = f"Context:\n{context}\n\nQuestion:\n{query}\n\nAnswer:"
+    #
+    # response = model.generate_content(prompt)
+    #
+    # return response.text
+
+# query = 'what are you services?'
+# response = rag_response(query)
+# print(response)
+
+query = 'my name is Raheel, do you have property in palm jumairah?'
+response = rag_response(query)
+print(response)
+
+print('------------------------------------------------------------------------')
+query = 'how many housed you have there for rent.'
+response = rag_response(query)
+print(response)
+
+print('------------------------------------------------------------------------')
+query = 'summerize my chat.'
 response = rag_response(query)
 print(response)
 
 print('-----Test completed-------')
 
+def clear_memory():
+    global memory
+    memory.clear()
+    return "I have cleared our conversation history."
+
+clear_memory()
 
