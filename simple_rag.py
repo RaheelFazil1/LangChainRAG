@@ -4,6 +4,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 
 
+genai.configure(api_key=my_key)
+
 model = genai.GenerativeModel("gemini-1.5-flash")
 response_v1a = model.generate_content("what is 2+2 formula")
 # print(response_v1a.text)
@@ -64,7 +66,7 @@ def rag_response(query):
 
     return response.text
 
-query = 'what is your fb link?'
+query = 'what are you services?'
 response = rag_response(query)
 print(response)
 
